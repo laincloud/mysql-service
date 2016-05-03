@@ -1,0 +1,130 @@
+<div id="content" class="col-lg-10 col-sm-10">
+            <!-- content starts -->
+            <div>
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">Home</a>
+        </li>
+    </ul>
+</div>
+<div class="row">
+<div class="box col-md-12">
+<div class="box-inner">
+<div class="box-header well" data-original-title="">
+    <h2><i class="glyphicon glyphicon-th-list"></i> Instances overview</h2>
+
+    <div class="box-icon">
+        <a href="#" class="btn btn-setting btn-round btn-default"><i class="glyphicon glyphicon-cog"></i></a>
+        <a href="#" class="btn btn-minimize btn-round btn-default"><i
+                class="glyphicon glyphicon-chevron-up"></i></a>
+        <a href="#" class="btn btn-close btn-round btn-default"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+</div>
+<div class="box-content">
+<table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+<thead>
+<tr>
+    <th>Address</th>
+    <th>Port</th>
+    <th>Role</th>
+    <th>Instance Status</th>
+    <th>Replication Status</th>
+    <th>Action</th>
+</tr>
+</thead>
+<tbody>
+{{range $i, $sv := .Instances}}
+<tr>
+    <td>{{$sv.Addr}}</td>
+    <td class="center">{{$sv.Port}}</td>
+    <td class="center">{{$sv.Role}}</td>
+    <td class="center">
+        {{if eq $sv.InstanceStatusText "UNREGISTERED"}}
+            <span class="label-default label">
+        {{else if eq $sv.InstanceStatusText "ERROR"}}
+            <span class="label-danger label">
+        {{else}}
+            <span class="label-success label">
+        {{end}}
+        {{$sv.InstanceStatusText}}</span>
+    </td>
+    <td class="center">
+        {{if eq $sv.ReplicationStatusText "NONE"}}
+            <span class="label-info label">
+        {{else if eq $sv.ReplicationStatusText "SYNING"}}
+            <span class="label-warning label">
+        {{else if eq $sv.ReplicationStatusText "PAUSING"}}
+            <span class="label-warning label">
+        {{else if eq $sv.ReplicationStatusText "WRONG MASTER"}}
+            <span class="label-danger label">
+        {{else if eq $sv.ReplicationStatusText "ERROR"}}
+            <span class="label-danger label">
+        {{else if eq $sv.ReplicationStatusText "UNKNOWN"}}
+            <span class="label-default label">
+        {{else}}
+            <span class="label-success label">
+        {{end}}
+        {{$sv.ReplicationStatusText}}</span>
+    </td>
+    <td class="center">
+        {{range $j, $act := $sv.AllowedActions}}
+            {{if eq $act "master"}}
+                <a class="btn btn-default btn-xs" href="/action?host={{$sv.Addr}}&port={{$sv.Port}}&type=master">
+                    <i class="glyphicon glyphicon-plus"></i>
+                        Register As Master
+                </a>
+            {{else if eq $act "slave"}}
+                <a class="btn btn-default btn-xs" href="/action?host={{$sv.Addr}}&port={{$sv.Port}}&type=slave">
+                    <i class="glyphicon glyphicon-plus"></i>
+                        Register As Slave
+                </a>
+            {{else if eq $act "standby"}}
+                <a class="btn btn-default btn-xs" href="/action?host={{$sv.Addr}}&port={{$sv.Port}}&type=standby">
+                    <i class="glyphicon glyphicon-plus"></i>
+                        Register As Standby
+                </a>
+            {{else if eq $act "active"}}
+                <a class="btn btn-success btn-xs" href="/action?host={{$sv.Addr}}&port={{$sv.Port}}&type=active">
+                    <i class="glyphicon glyphicon-download-alt"></i>
+                        Active
+                </a>
+            {{else if eq $act "resume"}}
+                <a class="btn btn-success btn-xs" href="/action?host={{$sv.Addr}}&port={{$sv.Port}}&type=resume">
+                    <i class="glyphicon glyphicon-play"></i>
+                        Resume
+                </a>
+            {{else if eq $act "pause"}}
+                <a class="btn btn-info btn-xs" href="/action?host={{$sv.Addr}}&port={{$sv.Port}}&type=pause">
+                    <i class="glyphicon glyphicon-pause"></i>
+                        Pause
+                </a>
+            {{else if eq $act "detach"}}
+                <a class="btn btn-danger btn-xs" href="/action?host={{$sv.Addr}}&port={{$sv.Port}}&type=detach">
+                    <i class="glyphicon glyphicon-eject"></i>
+                        Detach
+                </a>
+            {{else if eq $act "unregister"}}
+                <a class="btn btn-danger btn-xs" href="/action?host={{$sv.Addr}}&port={{$sv.Port}}&type=unregister">
+                    <i class="glyphicon glyphicon-trash"></i>
+                        Unregister
+                </a>
+            {{else if eq $act "switch"}}
+                <a class="btn btn-info btn-xs" href="/action?host={{$sv.Addr}}&port={{$sv.Port}}&type=switch">
+                    <i class="glyphicon glyphicon-random"></i>
+                        Switch
+                </a>
+            {{end}}
+        {{end}}
+    </td>
+</tr>
+{{end}}
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!--/span-->
+
+</div><!--/row-->
+<!-- content ends -->
+</div>

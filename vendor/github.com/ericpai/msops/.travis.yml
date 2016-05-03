@@ -1,0 +1,27 @@
+sudo: false
+
+language: go
+
+go:
+    - 1.6.1
+
+services:
+    - docker
+
+addons:
+    apt:
+        packages:
+        - mysql-client-core-5.6
+        - mysql-client-5.6
+
+before_install:
+    - . prepare.sh
+
+install:
+    - go get github.com/go-sql-driver/mysql
+
+script:
+    - go test -v ./... -coverprofile=coverage.txt -covermode=atomic
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash)

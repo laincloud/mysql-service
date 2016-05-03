@@ -1,0 +1,101 @@
+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+#
+# The MySQL Community Server configuration file.
+#
+# For explanations see
+# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
+
+[mysql]
+prompt = (\\u@\\h:\\p) [\\d]>\\_
+
+[client]
+port		= 3306
+socket		= /var/run/mysqld/mysqld.sock
+
+[mysqld_safe]
+pid-file	= /var/run/mysqld/mysqld.pid
+log-error   = /var/log/mysqld.log
+
+[mysqld]
+user		= mysql
+pid-file	= /var/run/mysqld/mysqld.pid
+socket		= /var/run/mysqld/mysqld.sock
+port		= 3306
+basedir		= /usr
+datadir		= /var/lib/mysql
+tmpdir		= /tmp
+lc-messages-dir	= /usr/share/mysql
+explicit_defaults_for_timestamp
+expire_logs_days = 30
+read_only = on
+server-id   = {{SERVER_ID}}
+log-bin = /var/lib/mysql_log_bin/lb
+character-set-server = utf8
+collation_server     = utf8_general_ci
+init-connect         ='SET NAMES utf8'
+
+# Slow log config here
+long_query_time = 1
+slow_query_log = 1
+slow_query_log_file = /var/lib/mysql_slow/slow.log
+
+binlog_format = mixed
+sync_binlog = 1
+binlog_cache_size	= 1M
+
+relay_log	= /var/lib/mysql_relay_log/mysql-relay-bin
+relay_log_index	= /var/lib/mysql_relay_log/mysql-relay-bin.index
+
+max_connections 	= 400
+
+sort_buffer_size	= 32K
+join_buffer_size	= 64K
+
+# thread_cache_size	= 100
+# thread_concurrency	= 8
+
+query_cache_size	= 8M
+query_cache_limit	= 2M
+
+log-slave-updates   = true
+gtid-mode           = on
+enforce-gtid-consistency = true
+sync-master-info    = 1
+
+# max_allowed_packet      = 160M
+
+innodb_buffer_pool_size = 128M
+innodb_log_buffer_size = 4M
+innodb_log_file_size = 32M
+innodb_additional_mem_pool_size = 8M
+innodb_flush_log_at_trx_commit = 1
+
+skip-name-resolve = 1
+# Instead of skip-networking the default is now to listen only on
+# localhost which is more compatible and is not less secure.
+# bind-address	= 127.0.0.1
+
+log-error	= /var/log/mysqld.err
+
+# Recommended in standard MySQL setup
+sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+# * IMPORTANT: Additional settings that can override those from this file!
+#   The files must end with '.cnf', otherwise they'll be ignored.
