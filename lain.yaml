@@ -1,0 +1,73 @@
+appname: mysql-service
+
+build:
+    base: laincloud/centos-lain:20160503
+    prepare:
+        version: 200
+        script:
+            - yum install -y http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
+            - rpm --import http://dev.mysql.com/doc/refman/5.6/en/checking-gpg-signature.html
+            - yum install -y mysql-community-server
+            - yum install -y http://www.percona.com/downloads/percona-release/redhat/0.1-3/percona-release-0.1-3.noarch.rpm
+            - yum install -y percona-xtrabackup-2.2.12
+            - yum -y clean all
+            - rm -rf /tmp/*
+            - mkdir -p $GOPATH/src/github.com/laincloud/
+            - mkdir -p /var/lib/monitor.conf/
+    script:
+        - ln -s /lain/app $GOPATH/src/github.com/laincloud/mysql-service
+        - go build -o monitord $GOPATH/src/github.com/laincloud/mysql-service/monitord.go
+        - go build -o proxyd $GOPATH/src/github.com/laincloud/mysql-service/proxyd.go
+
+proc.mysql-server:
+    cmd: ./init_mysql_service.sh
+    num_instances: 3
+    port: 3306
+    env:
+        - LAINLET_PORT=9001
+    memory: 512m
+    secret_files:
+        - conf/secret.conf
+    persistent_dirs:
+        - /var/lib/mysql/  # datadir
+        - /var/lib/mysql_log_bin: # binlog dir
+            backup_increment:
+                schedule: "*/5 * * * *"
+                expire: "30d"
+                pre_run: "/lain/app/tools/incrbk_prerun.sh"
+        - /var/log/baklog
+        - /var/lib/mysql_relay_log/
+        - /var/lib/mysql_slow/
+        - /var/lib/mysql_backup:
+            backup_full:
+                schedule: "0 3 * * 1"
+                expire: "30d"
+                pre_run: "/lain/app/tools/full_backup.sh"
+                post_run: "/lain/app/tools/clean.sh"
+
+portal.portal-mysql-master:
+    service_name: mysql-master
+    allow_clients: "**"
+    cmd: ./proxyd -p 3306 -m master -alsologtostderr=true -log_dir=/var/log -v=2
+    port: 3306
+
+portal.portal-mysql-slave:
+    service_name: mysql-slave
+    allow_clients: "**"
+    cmd: ./proxyd -p 3306 -m slave -alsologtostderr=true -log_dir=/var/log -v=2
+    port: 3306
+
+web:
+    cmd: ./monitord -alsologtostderr=true -log_dir=/var/log -v=2
+    memory: 256m
+    env:
+        - LAINLET_PORT=9001
+        - GRAPHITE_PORT=2003
+    port: 80
+    secret_files:
+        - conf/secret.conf
+    persistent_dirs:
+        - /var/lib/monitor.conf/
+
+notify:
+    slack: "#lain"
