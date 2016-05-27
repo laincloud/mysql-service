@@ -8,7 +8,40 @@ import (
 	"github.com/laincloud/lainlet/watcher"
 	"net/http"
 	"reflect"
+	"strings"
 )
+
+var (
+	secretKeys = []string{
+		"*",
+		"swarm_manager_ip",
+		"super_apps",
+		"dnsmasq_servers",
+		"calico_default_rule",
+		"calico_network",
+		"dnsmasq_addresses",
+		"ssl",
+		"vips",
+		"tinydns_fqdns",
+		"bootstrap_node_ip",
+		"dns_port",
+		"vip",
+		"etcd_cluster_token",
+		"system_volumes",
+		"rsyncd_secrets",
+		"dns_ip",
+		"node_network",
+	}
+)
+
+func isSecret(key string) bool {
+	for _, sk := range secretKeys {
+		if strings.HasPrefix(key, sk) {
+			return true
+		}
+	}
+	return false
+}
 
 // Config API
 type GeneralConfig struct {
@@ -43,9 +76,9 @@ func (gc *GeneralConfig) Make(conf map[string]interface{}) (api.API, bool, error
 }
 
 func (gc *GeneralConfig) Key(r *http.Request) (string, error) {
-	if !auth.IsSuper(r.RemoteAddr) {
+	target := api.GetString(r, "target", "*")
+	if isSecret(target) && !auth.IsSuper(r.RemoteAddr) {
 		return "", fmt.Errorf("authorize failed, super required")
 	}
-	target := api.GetString(r, "target", "*")
 	return target, nil
 }

@@ -3,18 +3,19 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mijia/sweb/log"
-	"golang.org/x/net/context"
 	"github.com/laincloud/deployd/engine"
 	"github.com/laincloud/lainlet/store"
 	"github.com/laincloud/lainlet/watcher"
 	"github.com/laincloud/lainlet/watcher/depends"
+	"github.com/mijia/sweb/log"
+	"golang.org/x/net/context"
 	"path"
 	"strings"
 )
 
 const (
-	dependsKey        = "/lain/deployd/pod_groups"
+	dependsKey        = "/lain/deployd/depends/pods"
+	podgroupKey       = "/lain/deployd/pod_groups"
 	superAppsStoreKey = "/lain/config/super_apps"
 )
 
@@ -24,7 +25,6 @@ var (
 	authTable           map[string]containerInfo
 	dependsInvertTable  map[string]string
 	podgroupInvertTable map[string]string
-	backupdInvertTable  map[string]string
 	dependsWatcher      *watcher.Watcher
 	podgroupWatcher     *watcher.Watcher
 	superAppsWatcher    *watcher.Watcher
@@ -37,13 +37,12 @@ func Init(s store.Store, ctx context.Context, ip string, act bool) error {
 	authTable = make(map[string]containerInfo)
 	dependsInvertTable = make(map[string]string)
 	podgroupInvertTable = make(map[string]string)
-	backupdInvertTable = make(map[string]string)
 	var err error
-	dependsWatcher, err = watcher.New(s, ctx, "/lain/deployd/depends/pods", dependsConvert, dependsInvertKey)
+	dependsWatcher, err = watcher.New(s, ctx, dependsKey, dependsConvert, dependsInvertKey)
 	if err != nil {
 		return err
 	}
-	podgroupWatcher, err = watcher.New(s, ctx, "/lain/deployd/pod_groups", podgroupConvert, podgroupInvertKey)
+	podgroupWatcher, err = watcher.New(s, ctx, podgroupKey, podgroupConvert, podgroupInvertKey)
 	if err != nil {
 		return err
 	}
@@ -119,14 +118,12 @@ func Pass(remoteIP string, appname string) bool {
 			return false
 		}
 
-		var remoteAppName string
-
-		if ci, ok := info[remoteIP].(containerInfo); ok {
-			remoteAppName = ci.AppName
-		} else {
-			log.Errorf("can not find app by ip %s", remoteIP)
+		remoteAppName, err := AppName(remoteIP)
+		if err != nil {
+			log.Errorf("Fail to get appname by ip %s, %s", remoteIP, err.Error())
 			return false
 		}
+
 		log.Debugf("check if app %s has rights visiting %s", remoteAppName, appname)
 		// visit itself?
 		if remoteAppName == appname {
@@ -159,12 +156,19 @@ func AppName(remoteIP string) (string, error) {
 	if index := strings.LastIndexByte(remoteIP, ':'); index >= 0 {
 		remoteIP = remoteIP[:index]
 	}
-	data, err := podgroupWatcher.Get(remoteIP)
+	podgroupData, err := podgroupWatcher.Get(remoteIP)
 	if err != nil {
 		return "", err
 	}
-	if appinfo, ok := data[remoteIP]; ok {
+	if appinfo, ok := podgroupData[remoteIP]; ok {
 		return appinfo.(containerInfo).AppName, nil
+	}
+	dependsData, err := dependsWatcher.Get(remoteIP)
+	if err != nil {
+		return "", err
+	}
+	if serviceNames, ok := dependsData[remoteIP]; ok && len(serviceNames.([]string)) > 0 {
+		return serviceNames.([]string)[0], nil
 	}
 	return "", fmt.Errorf("unkown address %s", remoteIP)
 }
@@ -217,7 +221,11 @@ func dependsConvert(pairs []*store.KVPair) (map[string]interface{}, error) {
 			log.Errorf("JSON unmarshal error: %s", err.Error())
 			return nil, fmt.Errorf("a KVPair unmarshal failed")
 		}
-		serviceName := strings.Split(kv.Key[len(dependsKey)+1:], ".")[0]
+		fields := strings.Split(kv.Key[len(dependsKey)+1:], ".")
+		serviceName := fields[0]
+		if len(fields) > 3 {
+			serviceName = strings.Join(fields[:len(fields)-2], ".")
+		}
 		for _, nodeData := range dp {
 			for _, appData := range nodeData {
 				for _, container := range appData.Pod.Containers {

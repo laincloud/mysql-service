@@ -1,7 +1,7 @@
 {
 	"ImportPath": "github.com/laincloud/mysql-service",
 	"GoVersion": "go1.6",
-	"GodepVersion": "v62",
+	"GodepVersion": "v70",
 	"Packages": [
 		"./..."
 	],
@@ -57,7 +57,7 @@
 		},
 		{
 			"ImportPath": "github.com/ericpai/msops",
-			"Rev": "c52042cff607bc5734acd13cb7c3dca61f53e58d"
+			"Rev": "7a79aac2370066db402e78b1252f196f97e5dd4c"
 		},
 		{
 			"ImportPath": "github.com/go-martini/martini",
@@ -87,47 +87,47 @@
 		},
 		{
 			"ImportPath": "github.com/laincloud/lainlet/api",
-			"Rev": "39bc2a643c90e2a1ca21b548a98353d135a72fb2"
+			"Rev": "f9b447e76640833e7b47d7ae29494806f4f610b6"
 		},
 		{
 			"ImportPath": "github.com/laincloud/lainlet/api/v2",
-			"Rev": "39bc2a643c90e2a1ca21b548a98353d135a72fb2"
+			"Rev": "f9b447e76640833e7b47d7ae29494806f4f610b6"
 		},
 		{
 			"ImportPath": "github.com/laincloud/lainlet/auth",
-			"Rev": "39bc2a643c90e2a1ca21b548a98353d135a72fb2"
+			"Rev": "f9b447e76640833e7b47d7ae29494806f4f610b6"
 		},
 		{
 			"ImportPath": "github.com/laincloud/lainlet/client",
-			"Rev": "39bc2a643c90e2a1ca21b548a98353d135a72fb2"
+			"Rev": "f9b447e76640833e7b47d7ae29494806f4f610b6"
 		},
 		{
 			"ImportPath": "github.com/laincloud/lainlet/store",
-			"Rev": "39bc2a643c90e2a1ca21b548a98353d135a72fb2"
+			"Rev": "f9b447e76640833e7b47d7ae29494806f4f610b6"
 		},
 		{
 			"ImportPath": "github.com/laincloud/lainlet/watcher",
-			"Rev": "39bc2a643c90e2a1ca21b548a98353d135a72fb2"
+			"Rev": "f9b447e76640833e7b47d7ae29494806f4f610b6"
 		},
 		{
 			"ImportPath": "github.com/laincloud/lainlet/watcher/config",
-			"Rev": "39bc2a643c90e2a1ca21b548a98353d135a72fb2"
+			"Rev": "f9b447e76640833e7b47d7ae29494806f4f610b6"
 		},
 		{
 			"ImportPath": "github.com/laincloud/lainlet/watcher/container",
-			"Rev": "39bc2a643c90e2a1ca21b548a98353d135a72fb2"
+			"Rev": "f9b447e76640833e7b47d7ae29494806f4f610b6"
 		},
 		{
 			"ImportPath": "github.com/laincloud/lainlet/watcher/depends",
-			"Rev": "39bc2a643c90e2a1ca21b548a98353d135a72fb2"
+			"Rev": "f9b447e76640833e7b47d7ae29494806f4f610b6"
 		},
 		{
 			"ImportPath": "github.com/laincloud/lainlet/watcher/nodes",
-			"Rev": "39bc2a643c90e2a1ca21b548a98353d135a72fb2"
+			"Rev": "f9b447e76640833e7b47d7ae29494806f4f610b6"
 		},
 		{
 			"ImportPath": "github.com/laincloud/lainlet/watcher/podgroup",
-			"Rev": "39bc2a643c90e2a1ca21b548a98353d135a72fb2"
+			"Rev": "f9b447e76640833e7b47d7ae29494806f4f610b6"
 		},
 		{
 			"ImportPath": "github.com/mijia/adoc",

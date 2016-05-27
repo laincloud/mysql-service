@@ -57,7 +57,7 @@ func (wi *WebrouterInfo) Make(data map[string]interface{}) (api.API, bool, error
 		pg := item.(podgroup.PodGroup)
 		parts := strings.Split(pg.Spec.Name, ".")
 		// Webrouter only cares about web procs
-		if len(parts) != 3 || parts[1] != "web" {
+		if len(parts) < 3 || parts[len(parts)-2] != "web" {
 			continue
 		}
 		ci := CoreInfoForWebrouter{
