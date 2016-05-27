@@ -44,6 +44,7 @@ proc.mysql-server:
                 expire: "30d"
                 pre_run: "/lain/app/tools/full_backup.sh"
                 post_run: "/lain/app/tools/clean.sh"
+    stateful: true
 
 portal.portal-mysql-master:
     service_name: mysql-master
@@ -68,6 +69,4 @@ web:
         - conf/secret.conf
     persistent_dirs:
         - /var/lib/monitor.conf/
-
-notify:
-    slack: "#lain"
+    stateful: true
