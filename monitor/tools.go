@@ -92,7 +92,7 @@ func prepareReportData(endpoint string) []string {
 	data = append(data,
 		formatReportData(endpoint, "Slave_IO_Running", parseYesNo(slaveSt.SlaveIORunning), timestamp),
 		formatReportData(endpoint, "Slave_SQL_Running", parseYesNo(slaveSt.SlaveSQLRunning), timestamp),
-		formatReportData(endpoint, "Threads_Connected", threadsConnected, timestamp),
+		formatReportData(endpoint, "Threads_connected", threadsConnected, timestamp),
 		formatReportData(endpoint, "Questions", questions, timestamp),
 		formatReportData(endpoint, "Alive", alive, timestamp),
 	)
