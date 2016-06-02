@@ -76,10 +76,10 @@ func prepareReportData(endpoint string) []string {
 	data := make([]string, 0, 5)
 	timestamp := time.Now().Unix()
 	slaveSt, _ := msops.GetSlaveStatus(endpoint)
-	threadsConenctedRes, _ := msops.GetGlobalStatus(endpoint, "Threads_Connected")
+	threadsConenctedRes, _ := msops.GetGlobalStatus(endpoint, "Threads_connected")
 	questionsRes, _ := msops.GetGlobalStatus(endpoint, "Questions")
 	var threadsConnected, questions int
-	if value, exist := threadsConenctedRes["Threads_Connected"]; exist {
+	if value, exist := threadsConenctedRes["Threads_connected"]; exist {
 		threadsConnected, _ = strconv.Atoi(value)
 	}
 	if value, exist := questionsRes["Questions"]; exist {
