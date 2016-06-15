@@ -279,7 +279,7 @@ func (monitor *MySQLMonitor) report() {
 		return
 	}
 
-	conn, err := net.Dial("tcp", graphiteAddress)
+	conn, err := net.DialTimeout("tcp", graphiteAddress, time.Second*2)
 	if err != nil {
 		glog.Errorf("Dial %s failed: %s", graphiteAddress, err.Error())
 		return
