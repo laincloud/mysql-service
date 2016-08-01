@@ -43,10 +43,10 @@ func FilterConsoleLogin(ctx *context.Context) {
 	//如果Session中没有access_token或者有但是验证不通过，则跳转到sso的登录页面
 	if token, exist := ctx.Input.Session("access_token").(string); exist {
 		if !validateConsoleRole(monitor.ConsoleAuthURL, token) {
-			redirectToSSO(ctx, &authConf)
+			redirectToSSO(ctx)
 		}
 	} else if code := ctx.Input.Query("code"); code == "" {
-		redirectToSSO(ctx, &authConf)
+		redirectToSSO(ctx)
 	} else {
 		//如果没有access_token但是有code，则用该code去sso获取access_token
 		v := url.Values{}
@@ -61,7 +61,7 @@ func FilterConsoleLogin(ctx *context.Context) {
 			resp      *http.Response
 			respBytes []byte
 		)
-		resp, err = client.Get(fmt.Sprintf("%s/oauth2/token?%s", authConf.URL, v.Encode()))
+		resp, err = client.Get(fmt.Sprintf("%s/oauth2/token?%s", monitor.SecretConf["sso_url"], v.Encode()))
 		if err == nil {
 			defer resp.Body.Close()
 			if respBytes, err = ioutil.ReadAll(resp.Body); err == nil {
@@ -101,7 +101,7 @@ func validateConsoleRole(authURL, token string) bool {
 	return false
 }
 
-func redirectToSSO(ctx *context.Context, authConf *monitor.AuthConfInfo) {
+func redirectToSSO(ctx *context.Context) {
 	v := url.Values{}
 	v.Set("response_type", "code")
 	v.Set("redirect_uri", monitor.SecretConf["redirect_uri"])
@@ -109,5 +109,5 @@ func redirectToSSO(ctx *context.Context, authConf *monitor.AuthConfInfo) {
 	v.Set("client_id", monitor.SecretConf["client_id"])
 	v.Set("scope", "write:group")
 	v.Set("state", fmt.Sprintf("%d", time.Now().Unix()))
-	ctx.Redirect(302, fmt.Sprintf("%s/oauth2/auth?%s", authConf.URL, v.Encode()))
+	ctx.Redirect(302, fmt.Sprintf("%s/oauth2/auth?%s", monitor.SecretConf["sso_url"], v.Encode()))
 }
