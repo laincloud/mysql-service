@@ -80,10 +80,7 @@ var (
 	graphiteKeyDomain  = strings.Replace(lainDomain, ".", "_", -1)
 	graphiteKeyAppName = strings.Replace(lainAppName, ".", "_", -1)
 	placeHolder        = new(interface{})
-	webPrefix          = getWebPrefix(lainAppName)
-
-	SSORedirectURI = fmt.Sprintf("http://%s.%s/", webPrefix, lainDomain)
-	ConsoleAuthURL = fmt.Sprintf("http://console.%s/api/v1/repos/%s/roles/", lainDomain, lainAppName)
+	ConsoleAuthURL     = fmt.Sprintf("http://console.%s/api/v1/repos/%s/roles/", lainDomain, lainAppName)
 
 	connParam = map[string]string{
 		"charset": "utf8",

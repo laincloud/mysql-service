@@ -63,15 +63,6 @@ func getSecretConf() map[string]string {
 	return conf
 }
 
-func getWebPrefix(appname string) string {
-	segs := strings.Split(appname, ".")
-	revSegs := make([]string, 0, len(segs))
-	for i := len(segs) - 1; i >= 0; i-- {
-		revSegs = append(revSegs, segs[i])
-	}
-	return strings.Join(revSegs, ".")
-}
-
 func prepareReportData(endpoint string) []string {
 	data := make([]string, 0, 5)
 	timestamp := time.Now().Unix()

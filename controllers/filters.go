@@ -53,7 +53,7 @@ func FilterConsoleLogin(ctx *context.Context) {
 		v.Set("code", code)
 		v.Set("client_id", monitor.SecretConf["client_id"])
 		v.Set("client_secret", monitor.SecretConf["secret"])
-		v.Set("redirect_uri", monitor.SSORedirectURI)
+		v.Set("redirect_uri", monitor.SecretConf["redirect_uri"])
 		v.Set("grant_type", "authorization_code")
 		client := http.DefaultClient
 		var (
@@ -104,7 +104,7 @@ func validateConsoleRole(authURL, token string) bool {
 func redirectToSSO(ctx *context.Context, authConf *monitor.AuthConfInfo) {
 	v := url.Values{}
 	v.Set("response_type", "code")
-	v.Set("redirect_uri", monitor.SSORedirectURI)
+	v.Set("redirect_uri", monitor.SecretConf["redirect_uri"])
 	v.Set("realm", "mysql")
 	v.Set("client_id", monitor.SecretConf["client_id"])
 	v.Set("scope", "write:group")
