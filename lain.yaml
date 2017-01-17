@@ -1,7 +1,7 @@
 appname: mysql-service
 
 build:
-    base: laincloud/centos-lain:20160503
+    base: laincloud/centos-lain:20170103
     prepare:
         version: 200
         script:
@@ -32,8 +32,8 @@ proc.mysql-server:
         - /var/lib/mysql/  # datadir
         - /var/lib/mysql_log_bin: # binlog dir
             backup_increment:
-                schedule: "*/5 * * * *"
-                expire: "30d"
+                schedule: "*/30 * * * *"
+                expire: "10d"
                 pre_run: "/lain/app/tools/incrbk_prerun.sh"
         - /var/log/baklog
         - /var/lib/mysql_relay_log/
