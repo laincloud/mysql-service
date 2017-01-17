@@ -3,7 +3,7 @@ appname: mysql-service
 build:
     base: laincloud/centos-lain:20170103
     prepare:
-        version: 200
+        version: 201
         script:
             - yum install -y http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
             - rpm --import http://dev.mysql.com/doc/refman/5.6/en/checking-gpg-signature.html
