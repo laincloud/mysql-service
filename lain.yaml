@@ -33,15 +33,15 @@ proc.mysql-server:
         - /var/lib/mysql_log_bin: # binlog dir
             backup_increment:
                 schedule: "*/30 * * * *"
-                expire: "10d"
+                expire: "5d"
                 pre_run: "/lain/app/tools/incrbk_prerun.sh"
         - /var/log/baklog
         - /var/lib/mysql_relay_log/
         - /var/lib/mysql_slow/
         - /var/lib/mysql_backup:
             backup_full:
-                schedule: "0 3 * * 1"
-                expire: "30d"
+                schedule: "0 3 */3 * *"
+                expire: "15d"
                 pre_run: "/lain/app/tools/full_backup.sh"
                 post_run: "/lain/app/tools/clean.sh"
     stateful: true
