@@ -1,9 +1,9 @@
 appname: mysql-service
 
 build:
-    base: laincloud/centos-lain:20170103
+    base: laincloud/centos-lain:20180103
     prepare:
-        version: 202
+        version: 203
         script:
             - yum install -y http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
             - gpg --keyserver hkp://keys.gnupg.net --recv-keys 5072E1F5
