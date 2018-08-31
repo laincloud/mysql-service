@@ -3,7 +3,7 @@ appname: mysql-service
 build:
     base: laincloud/centos-lain:20180103
     prepare:
-        version: 203
+        version: 204
         script:
             - yum install -y http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
             - gpg --keyserver hkp://keys.gnupg.net:80 --recv-keys 5072E1F5
@@ -16,18 +16,18 @@ build:
             - mkdir -p /var/lib/monitor.conf/
     script:
         - ln -s /lain/app $GOPATH/src/github.com/laincloud/mysql-service
-        - go build -o monitord $GOPATH/src/github.com/laincloud/mysql-service/monitord.go
-        - go build -o proxyd $GOPATH/src/github.com/laincloud/mysql-service/proxyd.go
+        - go build -o /lain/app/monitord $GOPATH/src/github.com/laincloud/mysql-service/monitord.go
+        - go build -o /lain/app/proxyd $GOPATH/src/github.com/laincloud/mysql-service/proxyd.go
 
 proc.mysql-server:
-    cmd: ./init_mysql_service.sh
+    cmd: /lain/app/init_mysql_service.sh
     num_instances: 3
     port: 3306
     env:
         - LAINLET_PORT=9001
     memory: 512m
     secret_files:
-        - conf/secret.conf
+        - /lain/app/conf/secret.conf
     persistent_dirs:
         - /var/lib/mysql/  # datadir
         - /var/lib/mysql_log_bin: # binlog dir
@@ -49,24 +49,24 @@ proc.mysql-server:
 portal.portal-mysql-master:
     service_name: mysql-master
     allow_clients: "**"
-    cmd: ./proxyd -p 3306 -m master -alsologtostderr=true -log_dir=/var/log -v=2
+    cmd: /lain/app/proxyd -p 3306 -m master -alsologtostderr=true -log_dir=/var/log -v=2
     port: 3306
 
 portal.portal-mysql-slave:
     service_name: mysql-slave
     allow_clients: "**"
-    cmd: ./proxyd -p 3306 -m slave -alsologtostderr=true -log_dir=/var/log -v=2
+    cmd: /lain/app/proxyd -p 3306 -m slave -alsologtostderr=true -log_dir=/var/log -v=2
     port: 3306
 
 web:
-    cmd: ./monitord -alsologtostderr=true -log_dir=/var/log -v=2
+    cmd: /lain/app/monitord -alsologtostderr=true -log_dir=/var/log -v=2
     memory: 256m
     env:
         - LAINLET_PORT=9001
         - GRAPHITE_PORT=2003
     port: 80
     secret_files:
-        - conf/secret.conf
+        - /lain/app/conf/secret.conf
     persistent_dirs:
         - /var/lib/monitor.conf/
     stateful: true
